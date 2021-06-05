@@ -1,0 +1,17 @@
+[GIN-VUE-ADMIN]2021/06/04 - 15:01:46.255	[34minfo[0m	D:/Program/GO/gin-vue-admin/server/initialize/router.go:21	use middleware logger
+[GIN-VUE-ADMIN]2021/06/04 - 15:01:46.392	[34minfo[0m	D:/Program/GO/gin-vue-admin/server/initialize/router.go:24	use middleware cors
+[GIN-VUE-ADMIN]2021/06/04 - 15:01:46.393	[34minfo[0m	D:/Program/GO/gin-vue-admin/server/initialize/router.go:26	register swagger handler
+[GIN-VUE-ADMIN]2021/06/04 - 15:01:46.421	[34minfo[0m	D:/Program/GO/gin-vue-admin/server/initialize/router.go:56	router register success
+[GIN-VUE-ADMIN]2021/06/04 - 15:01:46.441	[34minfo[0m	D:/Program/GO/gin-vue-admin/server/core/server.go:28	server run success on 	{"address": ":8888"}
+[GIN-VUE-ADMIN]2021/06/04 - 17:35:09.660	[34minfo[0m	D:/Program/GO/gin-vue-admin/server/api/v1/sys_initdb.go:52	前往初始化数据库
+[GIN-VUE-ADMIN]2021/06/04 - 17:35:43.655	[31merror[0m	D:/Program/GO/gin-vue-admin/server/api/v1/sys_initdb.go:27	参数校验不通过	{"err": "Key: 'InitDB.DBName' Error:Field validation for 'DBName' failed on the 'required' tag"}
+[GIN-VUE-ADMIN]2021/06/04 - 17:35:57.211	[31merror[0m	D:/Program/GO/gin-vue-admin/server/api/v1/sys_initdb.go:32	自动创建数据库失败	{"err": "Error 1045: Access denied for user 'root'@'localhost' (using password: NO)"}
+[GIN-VUE-ADMIN]2021/06/04 - 17:36:22.169	[31merror[0m	D:/Program/GO/gin-vue-admin/server/api/v1/sys_initdb.go:32	自动创建数据库失败	{"err": "Error 1045: Access denied for user 'root'@'localhost' (using password: NO)"}
+[GIN-VUE-ADMIN]2021/06/04 - 17:38:08.260	[34minfo[0m	D:/Program/GO/gin-vue-admin/server/api/v1/sys_initdb.go:46	数据库无需初始化
+[GIN-VUE-ADMIN]2021/06/04 - 17:39:54.274	[34minfo[0m	D:/Program/GO/gin-vue-admin/server/api/v1/sys_initdb.go:46	数据库无需初始化
+[GIN-VUE-ADMIN]2021/06/04 - 17:46:31.363	[34minfo[0m	register table success
+[GIN-VUE-ADMIN]2021/06/04 - 17:46:31.365	[34minfo[0m	use middleware logger
+[GIN-VUE-ADMIN]2021/06/04 - 17:46:31.365	[34minfo[0m	use middleware cors
+[GIN-VUE-ADMIN]2021/06/04 - 17:46:31.366	[34minfo[0m	register swagger handler
+[GIN-VUE-ADMIN]2021/06/04 - 17:46:31.387	[34minfo[0m	router register success
+[GIN-VUE-ADMIN]2021/06/04 - 17:46:31.394	[34minfo[0m	server run success on 	{"address": ":8888"}

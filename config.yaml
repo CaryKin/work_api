@@ -6,7 +6,7 @@ aliyun-oss:
   bucket-url: yourBucketUrl
 autocode:
   transfer-restart: true
-  root: ""
+  root: D:\Program\GO\gin-vue-admin
   server: /server
   server-api: /api/v1
   server-initialize: /initialize
@@ -89,7 +89,7 @@ zap:
   prefix: '[GIN-VUE-ADMIN]'
   director: log
   link-name: latest_log
-  showLine: true
+  showLine: false
   encode-level: LowercaseColorLevelEncoder
   stacktrace-key: stacktrace
   log-in-console: true

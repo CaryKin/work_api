@@ -35,7 +35,7 @@ func DeleteShopProduct(shopProduct model.ShopProduct) (err error) {
 //@return: err error
 
 func DeleteShopProductByIds(ids request.IdsReq) (err error) {
-	err = global.GVA_DB.Delete(&[]model.ShopProduct{},"id in ?",ids.Ids).Error
+	err = global.GVA_DB.Delete(&[]model.ShopProduct{}, "id in ?", ids.Ids).Error
 	return err
 }
 
@@ -70,11 +70,23 @@ func GetShopProduct(id uint) (err error, shopProduct model.ShopProduct) {
 func GetShopProductInfoList(info request.ShopProductSearch) (err error, list interface{}, total int64) {
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
-    // 创建db
+	// 创建db
 	db := global.GVA_DB.Model(&model.ShopProduct{})
-    var shopProducts []model.ShopProduct
-    // 如果有条件搜索 下方会自动创建搜索语句
+	var shopProducts []model.ShopProduct
+	// 如果有条件搜索 下方会自动创建搜索语句
 	err = db.Count(&total).Error
 	err = db.Limit(limit).Offset(offset).Find(&shopProducts).Error
+	return err, shopProducts, total
+}
+
+func GetShopProductInfoByCate(info request.ShopProductByCateId) (err error, list interface{}, total int64) {
+	limit := info.PageSize
+	offset := info.PageSize * (info.Page - 1)
+	// 创建db
+	db := global.GVA_DB.Model(&model.ShopProduct{})
+	var shopProducts []model.ShopProduct
+	// 如果有条件搜索 下方会自动创建搜索语句
+	err = db.Count(&total).Error
+	err = db.Limit(limit).Offset(offset).Where("cate_id = ?", info.ID).Find(&shopProducts).Error
 	return err, shopProducts, total
 }

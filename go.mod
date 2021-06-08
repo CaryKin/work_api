@@ -59,6 +59,7 @@ require (
 	golang.org/x/sys v0.0.0-20210603125802-9665404d3644 // indirect
 	golang.org/x/tools v0.1.2 // indirect
 	google.golang.org/protobuf v1.24.0 // indirect
+	gopkg.in/go-playground/validator.v8 v8.18.2 // indirect
 	gopkg.in/ini.v1 v1.55.0 // indirect
 	gorm.io/driver/mysql v1.0.1
 	gorm.io/gorm v1.20.7

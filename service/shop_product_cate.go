@@ -3,6 +3,7 @@ package service
 import (
 	"gin-vue-admin/global"
 	"gin-vue-admin/model"
+	"gin-vue-admin/model/enums"
 	"gin-vue-admin/model/request"
 )
 
@@ -35,7 +36,7 @@ func DeleteShopProductCate(shopProductCate model.ShopProductCate) (err error) {
 //@return: err error
 
 func DeleteShopProductCateByIds(ids request.IdsReq) (err error) {
-	err = global.GVA_DB.Delete(&[]model.ShopProductCate{},"id in ?",ids.Ids).Error
+	err = global.GVA_DB.Delete(&[]model.ShopProductCate{}, "id in ?", ids.Ids).Error
 	return err
 }
 
@@ -67,14 +68,52 @@ func GetShopProductCate(id uint) (err error, shopProductCate model.ShopProductCa
 //@param: info request.ShopProductCateSearch
 //@return: err error, list interface{}, total int64
 
-func GetShopProductCateInfoList(info request.ShopProductCateSearch) (err error, list interface{}, total int64) {
+func GetShopProductCateInfoPage(info request.ShopProductCateSearch) (err error, list interface{}, total int64) {
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
-    // 创建db
+	// 创建db
 	db := global.GVA_DB.Model(&model.ShopProductCate{})
-    var shopProductCates []model.ShopProductCate
-    // 如果有条件搜索 下方会自动创建搜索语句
+	var shopProductCates []model.ShopProductCate
+	// 如果有条件搜索 下方会自动创建搜索语句
 	err = db.Count(&total).Error
 	err = db.Limit(limit).Offset(offset).Find(&shopProductCates).Error
 	return err, shopProductCates, total
+}
+
+func GetShopProductCateInfoList() (err error, shopProductCates []model.ShopProductCate) {
+	// 创建db
+	db := global.GVA_DB.Model(&model.ShopProductCate{})
+	//var shopProductCates []model.ShopProductCate
+	// 如果有条件搜索 下方会自动创建搜索语句
+	err = db.Find(&shopProductCates).Error
+	return err, shopProductCates
+}
+
+func GetShopProductCateTree() (err error, menus []request.ShopProductCateTree) {
+	err, menuTree := getShopProductCateTreeMap()
+	menus = menuTree[0]
+	for i := 0; i < len(menus); i++ {
+		err = getCateChildrenList(&menus[i], menuTree)
+	}
+	return err, menus
+}
+
+func getShopProductCateTreeMap() (err error, treeMap map[int][]request.ShopProductCateTree) {
+	var cateModel []model.ShopProductCate
+	treeMap = make(map[int][]request.ShopProductCateTree)
+	err = global.GVA_DB.Where("status = ?", enums.ENABLED).Order("sort").Find(&cateModel).Error
+	allCates := request.ModelByShopProductCateTree(cateModel)
+	for _, v := range allCates {
+		treeMap[v.Pid] = append(treeMap[v.Pid], v)
+	}
+	return err, treeMap
+}
+
+// 递归的获取栏目
+func getCateChildrenList(menu *request.ShopProductCateTree, treeMap map[int][]request.ShopProductCateTree) (err error) {
+	menu.Children = treeMap[menu.Pid]
+	for i := 0; i < len(menu.Children); i++ {
+		err = getCateChildrenList(&menu.Children[i], treeMap)
+	}
+	return err
 }

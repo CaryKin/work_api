@@ -2,6 +2,7 @@ package global
 
 import (
 	"gin-vue-admin/utils/timer"
+	ut "github.com/go-playground/universal-translator"
 
 	"go.uber.org/zap"
 
@@ -20,4 +21,5 @@ var (
 	//GVA_LOG    *oplogging.Logger
 	GVA_LOG   *zap.Logger
 	GVA_Timer timer.Timer = timer.NewTimerTask()
+	GVA_Trans ut.Translator
 )

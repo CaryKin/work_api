@@ -1,4 +1,4 @@
-package common
+package validate
 
 import (
 	"gin-vue-admin/model/response"

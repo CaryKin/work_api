@@ -8,6 +8,6 @@ type ShopProductSearch struct {
 }
 
 type ShopProductByCateId struct {
-	ID uint `from:"id" json:"id" binding:"required" label:"主键"`
+	ID uint `form:"id" json:"id" binding:"required" label:"主键"`
 	PageInfo
 }

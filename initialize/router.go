@@ -1,11 +1,13 @@
 package initialize
 
 import (
+	"gin-vue-admin/common/validate"
 	_ "gin-vue-admin/docs"
 	"gin-vue-admin/global"
 	"gin-vue-admin/middleware"
 	"gin-vue-admin/router/admin"
 	"gin-vue-admin/router/product"
+	"go.uber.org/zap"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -32,6 +34,11 @@ func Routers() *gin.Engine {
 		admin.InitInitRouter(PublicGroup) // 自动初始化相关
 	}
 	PrivateGroup := Router.Group("backend")
+
+	if err := validate.InitTrans("zh"); err != nil {
+		global.GVA_LOG.Error("init trans failed", zap.Any("err", err))
+	}
+
 	PrivateGroup.Use(middleware.JWTAuth()).Use(middleware.CasbinHandler())
 	{
 		admin.InitApiRouter(PrivateGroup)                   // 注册功能api路由

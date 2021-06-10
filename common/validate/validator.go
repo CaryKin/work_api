@@ -1,4 +1,4 @@
-package common
+package validate
 
 import (
 	"fmt"
@@ -8,6 +8,7 @@ import (
 	"github.com/go-playground/locales/zh"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
+	"reflect"
 	"strings"
 
 	enTranslations "github.com/go-playground/validator/v10/translations/en"
@@ -28,15 +29,13 @@ func InitTrans(locale string) (err error) {
 		// uni := ut.New(zhT, zhT) 也是可以的
 		uni := ut.New(enT, zhT, enT)
 
-		/*v.RegisterTagNameFunc(func(fld reflect.StructField) string {
-			name:=fld.Tag.Get("label")
-			return name
-		})*/
-
-		/*v.RegisterAlias(func(fld reflect.StructField) string {
-			name:=fld.Tag.Get("label")
-			return name
-		})*/
+		v.RegisterTagNameFunc(func(field reflect.StructField) string {
+			label := field.Tag.Get("label")
+			if label == "" {
+				return field.Tag.Get("json")
+			}
+			return label
+		})
 
 		// locale 通常取决于 http 请求头的 'Accept-Language'
 		var ok bool
@@ -70,21 +69,31 @@ func RemoveTopStruct(fields map[string]string) map[string]string {
 	return res
 }
 
-// registerTranslator 为自定义字段添加翻译功能
-func registerTranslator(tag string, msg string) validator.RegisterTranslationsFunc {
-	return func(trans ut.Translator) error {
-		if err := trans.Add(tag, msg, false); err != nil {
-			return err
-		}
-		return nil
-	}
-}
+type ValidationErrorsTranslations map[string]string
 
-// translate 自定义字段的翻译方法
-func translate(trans ut.Translator, fe validator.FieldError) string {
-	msg, err := trans.T(fe.Tag(), fe.Field())
-	if err != nil {
-		panic(fe.(error).Error())
+// 自定义验证错误返回方法
+func Translate(err error, request interface{}) (ValidationErrorsTranslations, string) {
+	errs, ok := err.(validator.ValidationErrors)
+
+	var errList = make(ValidationErrorsTranslations, len(errs))
+
+	if !ok {
+		// 非validator.ValidationErrors类型错误直接返回
+		return errList, err.Error()
+
+	} else {
+		for _, err := range errs {
+			// 获取原来的标签 - json
+			fieldName := err.StructField()
+			t := reflect.TypeOf(request)
+			field, _ := t.FieldByName(fieldName)
+			j := field.Tag.Get("json")
+
+			// 修改
+			errList[j] = err.Translate(global.GVA_Trans)
+		}
+
+		return errList, "验证失败"
 	}
-	return msg
+
 }

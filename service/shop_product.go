@@ -79,6 +79,10 @@ func GetShopProductInfoList(info request.ShopProductSearch) (err error, list int
 	return err, shopProducts, total
 }
 
+//@description: 根据cate_id获取产品分页
+//@author: Layman
+//@date: 10:30 2021/6/11
+
 func GetShopProductInfoByCate(info request.ShopProductByCateId) (err error, list interface{}, total int64) {
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)

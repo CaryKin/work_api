@@ -1,3 +1,4 @@
+debug: false
 aliyun-oss:
   endpoint: yourEndpoint
   access-key-id: yourAccessKeyId
@@ -84,9 +85,10 @@ timer:
     compareField: created_at
     interval: 2160h
 zap:
+#  level: info
   level: info
   format: console
-  prefix: '[GIN-VUE-ADMIN]'
+  prefix: '[WORK-API]'
   director: log
   link-name: latest_log
   showLine: false

@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"gin-vue-admin/global"
 	"gin-vue-admin/utils"
+	zaprotatelogs "github.com/lestrrat-go/file-rotatelogs"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"os"
+	"path"
 	"time"
 )
 
@@ -88,15 +90,47 @@ func getEncoder() zapcore.Encoder {
 
 // getEncoderCore 获取Encoder的zapcore.Core
 func getEncoderCore() (core zapcore.Core) {
-	writer, err := utils.GetWriteSyncer() // 使用file-rotatelogs进行日志分割
-	if err != nil {
-		fmt.Printf("Get Write Syncer Failed err:%v", err.Error())
-		return
-	}
-	return zapcore.NewCore(getEncoder(), writer, level)
+
+	//writer, err := GetWriteSyncer() // 使用file-rotatelogs进行日志分割
+	infoLevel := zap.LevelEnablerFunc(func(level zapcore.Level) bool {
+		return level <= zapcore.InfoLevel
+	})
+
+	errorLevel := zap.LevelEnablerFunc(func(level zapcore.Level) bool {
+		return level >= zapcore.ErrorLevel
+	})
+
+	logPath := global.GVA_CONFIG.Zap.Director
+	return zapcore.NewTee(
+		zapcore.NewCore(getEncoder(), GetWriteSyncer(logPath+"/info"), infoLevel),
+		zapcore.NewCore(getEncoder(), GetWriteSyncer(logPath+"/error"), errorLevel),
+	)
 }
 
 // 自定义日志输出时间格式
 func CustomTimeEncoder(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
 	enc.AppendString(t.Format(global.GVA_CONFIG.Zap.Prefix + "2006/01/02 - 15:04:05.000"))
+}
+
+//@author: [SliverHorn](https://github.com/SliverHorn)
+//@function: GetWriteSyncer
+//@description: zap logger中加入file-rotatelogs
+//@return: zapcore.WriteSyncer, error
+func GetWriteSyncer(logPath string) zapcore.WriteSyncer {
+
+	fileWriter, err := zaprotatelogs.New(
+		path.Join(logPath, "%Y-%m-%d.log"),
+		zaprotatelogs.WithMaxAge(7*24*time.Hour),
+		zaprotatelogs.WithRotationTime(24*time.Hour),
+	)
+
+	if err != nil {
+		panic(err)
+	}
+
+	if global.GVA_CONFIG.Zap.LogInConsole {
+		return zapcore.NewMultiWriteSyncer(zapcore.AddSync(os.Stdout), zapcore.AddSync(fileWriter))
+	}
+
+	return zapcore.AddSync(fileWriter)
 }

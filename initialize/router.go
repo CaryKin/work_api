@@ -18,7 +18,9 @@ import (
 // 初始化总路由
 
 func Routers() *gin.Engine {
-	var Router = gin.Default()
+	var Router = gin.New()
+	// 定义全局中间件
+	Router.Use(middleware.ZapLogger(), middleware.GinRecovery(true))
 	Router.StaticFS(global.GVA_CONFIG.Local.Path, http.Dir(global.GVA_CONFIG.Local.Path)) // 为用户头像和文件提供静态地址
 	// Router.Use(middleware.LoadTls())  // 打开就能玩https了
 	global.GVA_LOG.Info("use middleware logger")

@@ -1,8 +1,11 @@
 package validate
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
 	"gin-vue-admin/global"
+	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/locales/en"
 	"github.com/go-playground/locales/zh"
@@ -69,17 +72,18 @@ func RemoveTopStruct(fields map[string]string) map[string]string {
 	return res
 }
 
-type ValidationErrorsTranslations map[string]string
-
-// 自定义验证错误返回方法
-func Translate(err error, request interface{}) (ValidationErrorsTranslations, string) {
+//@description: 自定义验证错误返回方法
+//@author: Layman
+//@date: 10:08 2021/6/15
+func Translate(err error, request interface{}, c *gin.Context) map[string]string {
 	errs, ok := err.(validator.ValidationErrors)
 
-	var errList = make(ValidationErrorsTranslations, len(errs))
+	var errList = make(map[string]string, len(errs))
 
 	if !ok {
 		// 非validator.ValidationErrors类型错误直接返回
-		return errList, err.Error()
+		c.Error(err)
+		return errList
 
 	} else {
 		for _, err := range errs {
@@ -93,7 +97,12 @@ func Translate(err error, request interface{}) (ValidationErrorsTranslations, st
 			errList[j] = err.Translate(global.GVA_Trans)
 		}
 
-		return errList, "验证失败"
+		mjson, err := json.Marshal(errList)
+		if err != nil {
+			c.Error(err)
+			return errList
+		}
+		c.Error(errors.New(string(mjson)))
+		return errList
 	}
-
 }

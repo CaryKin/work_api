@@ -15,10 +15,8 @@ func GetShopProduct(c *gin.Context) {
 	var info request.ShopProductByCateId
 	//验证参数
 	if err := c.ShouldBind(&info); err != nil {
-		errs, msg := validate.Translate(err, info)
-		//global.GVA_LOG.Error("参数验证失败", zap.Any("err", errs))
-		c.Error(err)
-		response.FailWithDetailed(errs, msg, c)
+		errs := validate.Translate(err, info, c)
+		response.FailWithDetailed(errs, "参数验证失败", c)
 		return
 	}
 

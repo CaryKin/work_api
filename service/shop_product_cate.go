@@ -3,7 +3,7 @@ package service
 import (
 	"gin-vue-admin/global"
 	"gin-vue-admin/model"
-	"gin-vue-admin/model/enums"
+	"gin-vue-admin/model/enums/status"
 	"gin-vue-admin/model/request"
 )
 
@@ -101,7 +101,7 @@ func GetShopProductCateTree() (err error, menus []request.ShopProductCateTree) {
 func getShopProductCateTreeMap() (err error, treeMap map[int][]request.ShopProductCateTree) {
 	var cateModel []model.ShopProductCate
 	treeMap = make(map[int][]request.ShopProductCateTree)
-	err = global.GVA_DB.Where("status = ?", enums.ENABLED).Order("sort").Find(&cateModel).Error
+	err = global.GVA_DB.Where("status = ?", status.ENABLED).Order("sort").Find(&cateModel).Error
 	allCates := request.ModelByShopProductCateTree(cateModel)
 	for _, v := range allCates {
 		treeMap[v.Pid] = append(treeMap[v.Pid], v)

@@ -19,7 +19,6 @@ func ZapLogger() gin.HandlerFunc {
 		cost := time.Since(start)
 
 		errorMessage := c.Errors.ByType(gin.ErrorTypePrivate).String()
-
 		if errorMessage == "" {
 			if global.GVA_CONFIG.Debug {
 				global.GVA_LOG.Info(path,

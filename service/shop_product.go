@@ -3,6 +3,7 @@ package service
 import (
 	"gin-vue-admin/global"
 	"gin-vue-admin/model"
+	"gin-vue-admin/model/enums/status"
 	"gin-vue-admin/model/request"
 )
 
@@ -82,7 +83,6 @@ func GetShopProductInfoList(info request.ShopProductSearch) (err error, list int
 //@description: 根据cate_id获取产品分页
 //@author: Layman
 //@date: 10:30 2021/6/11
-
 func GetShopProductInfoByCate(info request.ShopProductByCateId) (err error, list interface{}, total int64) {
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
@@ -91,6 +91,11 @@ func GetShopProductInfoByCate(info request.ShopProductByCateId) (err error, list
 	var shopProducts []model.ShopProduct
 	// 如果有条件搜索 下方会自动创建搜索语句
 	err = db.Count(&total).Error
-	err = db.Limit(limit).Offset(offset).Where("cate_id = ?", info.ID).Find(&shopProducts).Error
+
+	condition := make(map[string]interface{})
+	condition["cate_id"] = info.ID
+	condition["status"] = status.ENABLED
+
+	err = db.Limit(limit).Offset(offset).Where(condition).Find(&shopProducts).Error
 	return err, shopProducts, total
 }
